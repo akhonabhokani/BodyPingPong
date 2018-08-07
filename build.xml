@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Targets you can use are:
+ run        runs the built projects (builds it if that's not been done yet
+ build      builds (compiles, creates a jar archive and places resources
+            in the right places)
+-->
+<project name="BodyPingPong" default="default" basedir=".">
+    <description>Builds, tests, and runs the project BodyPingPong.</description>
+      
+    <property name="root" value="." />
+    <property name="app.name" value="Body PingPong" />
+    <property name="libs" value="lib"/>    
+    <property name="src" value="src"/>    
+    <!--<property name="testsrc" value="test"/> -->
+    <property name="testdest" value="testclasses" />
+    <property name="build" value="build"/>
+    <property name="dest" value="${build}/classes"/>
+    <property name="dist" value="${root}/dist"/>
+    <property name="media" value="data" file="excellent_defence.wav" />
+    <property name="3rdparty.licences" value="3rdparty" />
+    
+    <!-- Where libraries  live -->
+    <property name= "jinput_jar" value = "${root}/lib/jar/jinput.jar" />
+    <property name= "lwjgl_jar" value = "${root}/lib/jar/lwjgl.jar" />
+    <property name= "lwjgl_util_jar" value = "${root}/lib/jar/lwjgl_util.jar" />
+        
+    <available file="${jinput_jar}" property="present.jinput" />    
+    <available file="${lwjgl_jar}" property="present.lwjgl" />
+    <available file="${lwjgl_util_jar}" property="present.lwjglutil" />    
+    <!--<available filepath="${media}" type="dir" property="present.media" />-->
+    
+    <!-- FAIL if these aren't present -->
+    <fail unless="present.jinput"
+    message="jinput.jar library is missing. Downlowd it from http://lwjgl.org." />
+    <fail unless="present.lwjgl"
+    message="lwjgl.jar library is missing. Downlowd it from http://lwjgl.org.
+    It is recommended that you download it as a buddle, for competibility reasons"/>
+    <fail unless="present.lwjglutil"
+    message="lwjgl_util.jar library is missing. Downlowd it from http://lwjgl.org." /> 
+    <!--<fail unless="present.media"
+    message="Directory 'data' is missing. There won't be any sounds for the game" />
+    -->
+     
+    <!-- init - creates destination and build dirs-->
+    <target name="-init" description="creates destination dir(s)">
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dest}"/>        
+    </target>
+    
+    <!-- compile not meant to be called outside this script -->
+    <target name="-compile" depends="-init" description="javac-s evereyting">        
+        <javac debug="-g" deprecation="true"                 
+            destdir="${dest}" nowarn="false"
+            target="1.5" optimize="on" >       
+            <src path="${src}"/>
+            <classpath>
+                <pathelement location="${dest}"/>
+                <pathelement location="${jinput_jar}"/>                
+                <pathelement location="${lwjgl_jar}"/>
+                <pathelement location="${lwjgl_util_jar}"/>
+            </classpath>
+            
+        </javac>
+    </target>
+    
+    <target name="run" depends="-init,-compile" description="runs the project using the main class">
+        <java   classname="za.co.meraka.Main"
+            fork="false" failonerror="true">
+            <!--<arg value="-Djava.security.policy=java.polocy"/>-->
+            <classpath>
+                <pathelement location="${dest}"/>
+                <pathelement location="${jinput_jar}"/>
+                <pathelement location="${lwjgl_jar}"/>
+                <pathelement location="${lwjgl_util_jar}"/>                
+            </classpath>           
+        </java>
+    </target>
+    
+    <target name="build" depends="-compile" description="Builds the project's Jar file" >
+        <jar compress="true" destfile="${dist}/BodyPingPong.jar">
+            <fileset dir="${dest}">			    
+                <include name="**/*.*" />
+            </fileset>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Main-Class" value="za.co.meraka.Main"/>
+                <attribute name="Classpath"
+                value="${jinput_jar}:${lwjgl_jar}:${lwjgl_util_jar}:" />
+            </manifest>
+            <zipfileset dir="${media}"/>
+            <zipfileset dir="${3rdparty.licences}" />
+            <zipfileset src="${jinput_jar}"/>
+            <zipfileset src="${lwjgl_jar}"/>
+            <zipfileset src="${lwjgl_util_jar}"/>
+        </jar>
+    </target>
+   
+    <javadoc2 destdir="${dist}" author="Akhona" failonerror="true" sourcepath="${src}"/>
+    
+    <target name="clean" >		
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+</project>

@@ -1,0 +1,16 @@
+============== Body PingPong v0.1 ================
+
+This version is the first release for this game -- therefore not a major release. 
+The second version is currenty under development. We look forward to getting response about bugs, 
+features requests, new concepts, etc. Please use the SF.net site for reporting bugs and such.
+
+This file explains what Body PingPong and hopefully from that you can make out what it isn't.
+
+What Body PingPong is.
+-----------------------
+
+Body PingPong is a simple game that we intend to develop into a full multi-modal mixed-reality educational game.
+What we mean by multi-modal is that players of the game will use (full) body movements instead of 
+just their hands.
+
+NOTE: For each version we will release Windows, Linux, and a source code archives.
